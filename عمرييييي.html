@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حساب العمر - الجزائرية</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <!-- html2canvas Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Amiri', serif; /* استخدام خط يشبه الخط الكوفي */
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec); /* تدرج ألوان فاتحة */
+            color: #333;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        body.dark-mode {
+            background: linear-gradient(135deg, #1e1e1e, #121212); /* تدرج ألوان داكنة */
+            color: #f0f0f0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95); /* أبيض شفاف */
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+        body.dark-mode .container {
+            background: rgba(30, 30, 30, 0.95); /* أسود شفاف */
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+        h1 {
+            color: #2c3e50; /* لون داكن */
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+        body.dark-mode h1 {
+            color: #f0f0f0; /* لون فاتح */
+        }
+        .icon {
+            font-size: 2em; /* تصغير حجم الأيقونات */
+            color: #2c3e50;
+            margin: 10px;
+            transition: color 0.3s ease;
+        }
+        body.dark-mode .icon {
+            color: #f0f0f0;
+        }
+        .circle-input input[type="text"], .circle-input select {
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #3498db; /* لون أزرق */
+            border-radius: 50px; /* حواف دائرية */
+            font-size: 1em;
+            width: 80%;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            text-align: center;
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        body.dark-mode .circle-input input[type="text"], 
+        body.dark-mode .circle-input select {
+            background: rgba(30, 30, 30, 0.8);
+            color: #f0f0f0;
+            border-color: #2ecc71; /* لون أخضر */
+        }
+        button {
+            background-color: #3498db; /* لون أزرق */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px; /* حواف دائرية */
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9; /* لون أزرق داكن */
+        }
+        body.dark-mode button {
+            background-color: #2ecc71; /* لون أخضر */
+        }
+        body.dark-mode button:hover {
+            background-color: #27ae60; /* لون أخضر داكن */
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.4em;
+            color: #2c3e50; /* لون داكن */
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        body.dark-mode #result {
+            color: #f0f0f0;
+        }
+        .funny-text {
+            font-style: italic;
+            color: #e74c3c; /* لون أحمر */
+            margin-top: 10px;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+        body.dark-mode .funny-text {
+            color: #ff6b6b; /* لون أحمر فاتح */
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #7f8c8d; /* لون رمادي */
+            transition: color 0.3s ease;
+        }
+        body.dark-mode .footer {
+            color: #b0b0b0;
+        }
+        .footer a {
+            color: #3498db; /* لون أزرق */
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        body.dark-mode .footer a {
+            color: #2ecc71; /* لون أخضر */
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .share-button {
+            background-color: #2ecc71; /* لون أخضر */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px; /* حواف دائرية */
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+            display: none; /* مخفي بشكل افتراضي */
+        }
+        .share-button:hover {
+            background-color: #27ae60; /* لون أخضر داكن */
+        }
+        body.dark-mode .share-button {
+            background-color: #3498db; /* لون أزرق */
+        }
+        body.dark-mode .share-button:hover {
+            background-color: #2980b9; /* لون أزرق داكن */
+        }
+        .share-container {
+            display: none; /* مخفي بشكل افتراضي */
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px; /* زيادة الـ padding */
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 1200px; /* تكبير حجم الصورة */
+            height: 2100px; /* تكبير حجم الصورة */
+            margin: 20px auto;
+            text-align: center;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1000; /* تأكد من أن الحاوية تظهر فوق العناصر الأخرى */
+        }
+        .share-container h2, .share-container p {
+            margin: 15px 0; /* زيادة المسافة بين الأسطر */
+            font-size: 2em; /* زيادة حجم الخط */
+            color: #333; /* لون النص */
+        }
+        body.dark-mode .share-container {
+            background: rgba(30, 30, 30, 0.95);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode .share-container h2,
+        body.dark-mode .share-container p {
+            color: #f0f0f0; /* لون النص في الوضع المظلم */
+        }
+        .frame {
+            border: 10px solid #2c3e50; /* إطار داكن */
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            position: relative;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        body.dark-mode .frame {
+            background: #1e1e1e;
+            border-color: #2ecc71; /* لون أخضر */
+        }
+        .frame::after {
+            content: "مطور بواسطة: Abdelillahdris";
+            font-family: 'Amiri', serif; /* استخدام نفس الخط */
+            font-size: 1.2em;
+            color: #2c3e50;
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 0 10px;
+            transition: color 0.3s ease, background 0.3s ease;
+        }
+        body.dark-mode .frame::after {
+            color: #f0f0f0;
+            background: #1e1e1e;
+        }
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+        .dark-mode-toggle:hover {
+            background: #2980b9;
+        }
+        body.dark-mode .dark-mode-toggle {
+            background: #2ecc71;
+        }
+        body.dark-mode .dark-mode-toggle:hover {
+            background: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle Button -->
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">
+        🌙
+    </button>
+
+    <div class="container">
+        <!-- Icon for Fun -->
+        <div class="icon">
+            <i class="fas fa-birthday-cake"></i>
+        </div>
+        <h1>حساب العمر - بالطريقة الجزائرية 😎</h1>
+        <p>دخل تاريخ ميلادك (DD/MM/YYYY) واختر لهجتك، وخلينا نحسبولك عمرك بالطريقة الجزائرية! 🚀</p>
+        
+        <!-- Input for Birthdate -->
+        <div class="circle-input">
+            <input type="text" id="birthdate" placeholder="DD/MM/YYYY" maxlength="10">
+        </div>
+        
+        <!-- Select Dialect -->
+        <div class="circle-input">
+            <select id="dialect">
+                <option value="darja">دارجة جزائرية</option>
+                <option value="kabyle">قبايلية</option>
+            </select>
+        </div>
+        
+        <!-- Button with Icon -->
+        <button onclick="calculateAge()">
+            <i class="fas fa-calculator"></i> حساب العمر
+        </button>
+        
+        <!-- Result Display -->
+        <div id="result"></div>
+        <div class="funny-text" id="funnyComment"></div>
+        <div id="nextBirthday"></div>
+        <div id="daysSinceBirthday"></div>
+        <div id="birthdayDay"></div>
+        <div id="nextBirthdayDay"></div>
+        <div id="lastBirthdayDay"></div>
+        <div id="ageInSeconds"></div>
+        <div id="ageInMinutes"></div>
+        <div id="ageInHours"></div>
+        <div id="ageInWeeks"></div>
+        <div id="ageInMonths"></div>
+        <div id="historicalEvents"></div>
+        
+        <!-- Share Button -->
+        <button class="share-button" onclick="shareResult()">
+            <i class="fas fa-share"></i> مشاركة النتيجة
+        </button>
+        
+        <!-- Footer with Icon -->
+        <div class="footer">
+            <i class="fas fa-flag"></i> صنع في الجزائر بحب <i class="fas fa-heart"></i> | 
+            <a href="#" target="_blank">تواصل معنا</a>
+        </div>
+    </div>
+
+    <!-- Share Container (Hidden by Default) -->
+    <div class="share-container" id="shareContainer">
+        <div class="frame">
+            <h2 id="shareResultText"></h2>
+            <p id="shareCommentText"></p>
+            <p id="shareNextBirthday"></p>
+            <p id="shareDaysSinceBirthday"></p>
+            <p id="shareBirthdayDay"></p>
+            <p id="shareNextBirthdayDay"></p>
+            <p id="shareLastBirthdayDay"></p>
+            <p id="shareAgeInSeconds"></p>
+            <p id="shareAgeInMinutes"></p>
+            <p id="shareAgeInHours"></p>
+            <p id="shareAgeInWeeks"></p>
+            <p id="shareAgeInMonths"></p>
+            <p id="shareHistoricalEvents"></p>
+            <p id="shareDateText"></p>
+        </div>
+    </div>
+
+    <script>
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const darkModeToggle = document.querySelector('.dark-mode-toggle');
+            if (document.body.classList.contains('dark-mode')) {
+                darkModeToggle.innerHTML = '☀️'; // تغيير الأيقونة إلى شمس
+            } else {
+                darkModeToggle.innerHTML = '🌙'; // تغيير الأيقونة إلى قمر
+            }
+        }
+
+        // Auto-format date input
+        const birthdateInput = document.getElementById('birthdate');
+        birthdateInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2);
+            }
+            if (value.length > 5) {
+                value = value.slice(0, 5) + '/' + value.slice(5);
+            }
+            e.target.value = value.slice(0, 10); // Limit to 10 characters (DD/MM/YYYY)
+        });
+
+        function calculateAge() {
+            const birthdateValue = document.getElementById('birthdate').value;
+            const [day, month, year] = birthdateValue.split('/');
+            const birthdate = new Date(`${year}-${month}-${day}`);
+            const today = new Date();
+            let age = today.getFullYear() - birthdate.getFullYear();
+            const monthDifference = today.getMonth() - birthdate.getMonth();
+
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthdate.getDate())) {
+                age--;
+            }
+
+            const dialect = document.getElementById('dialect').value;
+            const resultDiv = document.getElementById('result');
+            const funnyCommentDiv = document.getElementById('funnyComment');
+            const nextBirthdayDiv = document.getElementById('nextBirthday');
+            const daysSinceBirthdayDiv = document.getElementById('daysSinceBirthday');
+            const birthdayDayDiv = document.getElementById('birthdayDay');
+            const nextBirthdayDayDiv = document.getElementById('nextBirthdayDay');
+            const lastBirthdayDayDiv = document.getElementById('lastBirthdayDay');
+            const ageInSecondsDiv = document.getElementById('ageInSeconds');
+            const ageInMinutesDiv = document.getElementById('ageInMinutes');
+            const ageInHoursDiv = document.getElementById('ageInHours');
+            const ageInWeeksDiv = document.getElementById('ageInWeeks');
+            const ageInMonthsDiv = document.getElementById('ageInMonths');
+            const historicalEventsDiv = document.getElementById('historicalEvents');
+
+            resultDiv.innerHTML = `<i class="fas fa-user"></i> عمرك هو: <strong>${age}</strong> سنة!`;
+
+            // Calculate next birthday
+            const nextBirthday = new Date(today.getFullYear(), birthdate.getMonth(), birthdate.getDate());
+            if (today > nextBirthday) {
+                nextBirthday.setFullYear(today.getFullYear() + 1);
+            }
+            const daysUntilNextBirthday = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
+            nextBirthdayDiv.innerHTML = `كم باقي لعيد ميلادك: <strong>${daysUntilNextBirthday}</strong> يوم!`;
+
+            // Calculate days since last birthday
+            const lastBirthday = new Date(today.getFullYear(), birthdate.getMonth(), birthdate.getDate());
+            if (today < lastBirthday) {
+                lastBirthday.setFullYear(today.getFullYear() - 1);
+            }
+            const daysSinceLastBirthday = Math.floor((today - lastBirthday) / (1000 * 60 * 60 * 24));
+            daysSinceBirthdayDiv.innerHTML = `كم مضى على عيد ميلادك: <strong>${daysSinceLastBirthday}</strong> يوم!`;
+
+            // Calculate birthday day
+            const daysOfWeek = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+            const birthdayDay = daysOfWeek[birthdate.getDay()];
+            birthdayDayDiv.innerHTML = `يوم ميلادك: <strong>${birthdayDay}</strong>`;
+
+            // Calculate next birthday day
+            const nextBirthdayDay = daysOfWeek[nextBirthday.getDay()];
+            nextBirthdayDayDiv.innerHTML = `يوم ميلادك القادم: <strong>${nextBirthdayDay}</strong>`;
+
+            // Calculate last birthday day
+            const lastBirthdayDay = daysOfWeek[lastBirthday.getDay()];
+            lastBirthdayDayDiv.innerHTML = `يوم ميلادك الماضي: <strong>${lastBirthdayDay}</strong>`;
+
+            // Calculate age in seconds, minutes, hours, weeks, and months
+            const ageInMilliseconds = today - birthdate;
+            const ageInSeconds = Math.floor(ageInMilliseconds / 1000);
+            const ageInMinutes = Math.floor(ageInSeconds / 60);
+            const ageInHours = Math.floor(ageInMinutes / 60);
+            const ageInWeeks = Math.floor(daysSinceLastBirthday / 7);
+            const ageInMonths = age * 12 + monthDifference;
+
+            ageInSecondsDiv.innerHTML = `عمرك بالثواني: <strong>${ageInSeconds}</strong> ثانية!`;
+            ageInMinutesDiv.innerHTML = `عمرك بالدقائق: <strong>${ageInMinutes}</strong> دقيقة!`;
+            ageInHoursDiv.innerHTML = `عمرك بالساعات: <strong>${ageInHours}</strong> ساعة!`;
+            ageInWeeksDiv.innerHTML = `عمرك بالأسابيع: <strong>${ageInWeeks}</strong> أسبوع!`;
+            ageInMonthsDiv.innerHTML = `عمرك بالأشهر: <strong>${ageInMonths}</strong> شهر!`;
+
+            // Historical events (example)
+            const historicalEvents = [
+                "حدث تاريخي 1: حدث مهم في العالم.",
+                "حدث تاريخي 2: حدث آخر مهم في العالم.",
+                "حدث تاريخي 3: حدث مهم في الجزائر."
+            ];
+            historicalEventsDiv.innerHTML = `أحداث تاريخية منذ ميلادك: <ul>${historicalEvents.map(event => `<li>${event}</li>`).join('')}</ul>`;
+
+            let comments = [];
+            if (dialect === "darja") {
+                if (age < 18) {
+                    comments = [
+                        "يا صغير، روح نام ولا تنسى الواجبات المدرسية! 📚",
+                        "شوفلك حياة يا زلمة، العمر ما يرجعش! 💪",
+                        "عمرك ذهب، روح جيب فلوس واتجوز! 💍",
+                        "يا عمي، روح استنى الموت بسلام! 😅",
+                        "العمر عدى، روح جيب كاس كيران وانسى! 🍻"
+                    ];
+                } else if (age >= 18 && age < 25) {
+                    comments = [
+                        "شاب عامر، روح شوف لك حياة! 💪",
+                        "العمر لسه في بدايته، استمتع بوقتك! 🎉",
+                        "روح اتعلم واتطور، المستقبل قدامك! 🚀",
+                        "العمر ده وقت التحديات، توكل على الله! 💼",
+                        "روح جرب كل شيء، العمر ما يرجعش! 🌟"
+                    ];
+                } else if (age >= 25 && age < 50) {
+                    comments = [
+                        "اتزوج وجيب أطفال يا خو! 👶",
+                        "العمر عدى، روح جيب فلوس واتجوز! 💍",
+                        "يا كبير، روح استقر واتجوز! 🏠",
+                        "العمر ما يرجعش، روح جيب عيال! 👨‍👩‍👧‍👦",
+                        "روح جيب عيال وربيهم كويس! 🍼"
+                    ];
+                } else {
+                    comments = [
+                        "يا عمي، روح استنى الموت بسلام! 😅",
+                        "العمر عدى، روح استمتع بوقتك! 🌅",
+                        "روح جيب كاس كيران وانسى! 🍻",
+                        "العمر ما يرجعش، روح استمتع بوقتك! 🌟",
+                        "روح جيب كاس شاي واستنى الموت! ☕"
+                    ];
+                }
+            } else if (dialect === "kabyle") {
+                if (age < 18) {
+                    comments = [
+                        "A winu aqcic, ruḥ ghas i tmeslayt d tɣuri! 📚",
+                        "Argaz ameqran, ruḥ af-d tudert! 💪",
+                        "Lɛemrek yella, ruḥ af-d tayri! 💍",
+                        "A winu amɣar, ruḥ qim deg laman! 😅",
+                        "Tameddurt tettawi, ruḥ ssuq-d tafat! 🌟"
+                    ];
+                } else if (age >= 18 && age < 25) {
+                    comments = [
+                        "Argaz ameqran, ruḥ af-d tudert! 💪",
+                        "Lɛemrek yella, ruḥ af-d tayri! 💍",
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟",
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟",
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟"
+                    ];
+                } else if (age >= 25 && age < 50) {
+                    comments = [
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟",
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟",
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟",
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟",
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟"
+                    ];
+                } else {
+                    comments = [
+                        "A winu amɣar, ruḥ qim deg laman! 😅",
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟",
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟",
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟",
+                        "Ruḥ ssuq-d tafat, tudert tettawi! 🌟"
+                    ];
+                }
+            }
+
+            const randomComment = comments[Math.floor(Math.random() * comments.length)];
+            funnyCommentDiv.innerHTML = randomComment;
+
+            // Show Share Button
+            document.querySelector('.share-button').style.display = 'block';
+        }
+
+        function shareResult() {
+            const resultDiv = document.getElementById('result').innerText;
+            const funnyCommentDiv = document.getElementById('funnyComment').innerText;
+            const nextBirthdayDiv = document.getElementById('nextBirthday').innerText;
+            const daysSinceBirthdayDiv = document.getElementById('daysSinceBirthday').innerText;
+            const birthdayDayDiv = document.getElementById('birthdayDay').innerText;
+            const nextBirthdayDayDiv = document.getElementById('nextBirthdayDay').innerText;
+            const lastBirthdayDayDiv = document.getElementById('lastBirthdayDay').innerText;
+            const ageInSecondsDiv = document.getElementById('ageInSeconds').innerText;
+            const ageInMinutesDiv = document.getElementById('ageInMinutes').innerText;
+            const ageInHoursDiv = document.getElementById('ageInHours').innerText;
+            const ageInWeeksDiv = document.getElementById('ageInWeeks').innerText;
+            const ageInMonthsDiv = document.getElementById('ageInMonths').innerText;
+            const historicalEventsDiv = document.getElementById('historicalEvents').innerText;
+            const date = new Date().toLocaleDateString();
+
+            // Update Share Container Content
+            document.getElementById('shareResultText').innerText = resultDiv;
+            document.getElementById('shareCommentText').innerText = funnyCommentDiv;
+            document.getElementById('shareNextBirthday').innerText = nextBirthdayDiv;
+            document.getElementById('shareDaysSinceBirthday').innerText = daysSinceBirthdayDiv;
+            document.getElementById('shareBirthdayDay').innerText = birthdayDayDiv;
+            document.getElementById('shareNextBirthdayDay').innerText = nextBirthdayDayDiv;
+            document.getElementById('shareLastBirthdayDay').innerText = lastBirthdayDayDiv;
+            document.getElementById('shareAgeInSeconds').innerText = ageInSecondsDiv;
+            document.getElementById('shareAgeInMinutes').innerText = ageInMinutesDiv;
+            document.getElementById('shareAgeInHours').innerText = ageInHoursDiv;
+            document.getElementById('shareAgeInWeeks').innerText = ageInWeeksDiv;
+            document.getElementById('shareAgeInMonths').innerText = ageInMonthsDiv;
+            document.getElementById('shareHistoricalEvents').innerText = historicalEventsDiv;
+            document.getElementById('shareDateText').innerText = `تاريخ المشاركة: ${date}`;
+
+            // Show Share Container
+            const shareContainer = document.getElementById('shareContainer');
+            shareContainer.style.display = 'block';
+
+            // Capture Share Container as Image
+            html2canvas(shareContainer).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = imgData;
+                link.download = `عمرك_بالجزائرية_${date}.png`;
+                link.click();
+            });
+
+            // Hide Share Container After Capture
+            setTimeout(() => {
+                shareContainer.style.display = 'none';
+            }, 1000); // إخفاء الحاوية بعد ثانية واحدة
+        }
+    </script>
+</body>
+</html>
